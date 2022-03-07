@@ -1,21 +1,46 @@
+document.getElementById('error-massage').style.display = 'none';
 const searchFood = () => {
   const searchField = document.getElementById("search-field");
   const searchText = searchField.value;
   console.log(searchText);
   //console.log(searchText);
+
+  // clear data
+
   searchField.value = "";
-  const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${searchText}`;
+  // document.getElementById('error-massage').style.display = 'none';
 
-  console.log(url);
+  if (searchText == "") {
+  } else {
+    const url = `https://www.themealdb.com/api/json/v91/1/search.php?s=${searchText}`;
 
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => displaySearchResult(data.meals));
+    // console.log(url);
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => displaySearchResult(data.meals));
+      .catch{error => displayError(error)}
+  }
 };
+
+const displayError = error => {
+  document.getElementById('error-massage').style.display = 'block';
+}
+
+// Load data
 
 const displaySearchResult = (meals) => {
   console.log(meals);
   const searchResult = document.getElementById("search-result");
+
+  // [[[[[[[[[Eamty Search result]]]]]]]]]
+  // searchResult.innerHTML = "";
+
+  searchResult.textContent = "";
+
+  // if (meals.length == 0) {
+  //   dont show no result
+  // }
   meals.forEach((meal) => {
     // console.log(meal);
     const div = document.createElement("div");
@@ -41,5 +66,19 @@ const loadMealDetail = (mealId) => {
   const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`;
   fetch(url)
     .then((res) => res.json())
-    .then((data) => data.meals);
+    .then((data) => displayDetail(data.meals[0]));
+};
+
+const displayDetail = (meal) => {
+  console.log(meal);
+  const mealDetails = document.getElementById("meal-details");
+  const div = document.createElement("div");
+  div.classList.add("card");
+  div.innerHTML = `<img src="${meal.strMealThumb}" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">${meal.strMeal}</h5>
+        <p class="card-text">${meal.strInstructions.slice(0, 150)}</p>
+        <a href="${meal.strYoutube}" class="btn btn-primary">Go somewhere</a>
+    </div>`;
+  mealDetails.appendChild(div);
 };
